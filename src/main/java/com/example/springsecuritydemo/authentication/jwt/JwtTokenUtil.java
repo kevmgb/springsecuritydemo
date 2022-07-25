@@ -19,7 +19,7 @@ public class JwtTokenUtil {
     public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getId() + "," + user.getEmail())
-                .setIssuer("kithinji")
+                .setIssuer("issuer")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -28,7 +28,7 @@ public class JwtTokenUtil {
 
     public boolean validateAccessToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJwt(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException ex) {
             LOGGER.error("JWT expired", ex);
@@ -42,5 +42,16 @@ public class JwtTokenUtil {
             LOGGER.error("Signature validation true", ex);
         }
         return false;
+    }
+
+    public String getSubject(String token) {
+        return parseClaims(token).getSubject();
+    }
+
+    public Claims parseClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
