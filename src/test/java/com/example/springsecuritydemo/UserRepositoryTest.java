@@ -22,7 +22,7 @@ public class UserRepositoryTest {
     @Test
     public void testCreateUser() {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        User newUser = new User("test@gmail.com", passwordEncoder.encode("admin"));
+        User newUser = new User("test2@gmail.com", passwordEncoder.encode("admin"));
         User savedUser = userRepository.save(newUser);
         assertThat(savedUser).isNotNull();
         assertThat(savedUser.getId()).isGreaterThan(0);
