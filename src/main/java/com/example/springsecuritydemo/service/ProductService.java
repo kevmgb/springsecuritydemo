@@ -5,8 +5,8 @@ import com.example.springsecuritydemo.models.request.ProductRequestPayload;
 
 import java.util.List;
 
-public abstract class ProductService {
-    public abstract List<Product> getAllProducts();
+public interface  ProductService {
+    List<Product> getAllProducts();
 
-    public abstract Product create(ProductRequestPayload productRequestPayload);
+    Product create(ProductRequestPayload productRequestPayload);
 }
