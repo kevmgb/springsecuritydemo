@@ -41,22 +41,16 @@ public class AuthApi {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request) throws Exception {
 
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-//            );
         authenticate(request.getEmail(), request.getPassword());
         User user = jwtUserDetailsService.loadUserByUsername(request.getEmail());
 
-//            User user = (User) authentication.getPrincipal();
         String accessToken = jwtTokenUtil.generateAccessToken(user);
-        System.out.println(accessToken);
+
         AuthResponse response = new AuthResponse(request.getEmail(), accessToken);
         return ResponseEntity.ok(response);
 
     }
     private void authenticate(String username, String password) throws Exception {
-        System.out.println(username);
-        System.out.println(encoder.encode(password));
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (BadCredentialsException e) {
