@@ -1,18 +1,14 @@
-package com.example.springsecuritydemo.authentication;
+package com.example.springsecuritydemo.controller;
 
+import com.example.springsecuritydemo.models.AuthRequest;
+import com.example.springsecuritydemo.models.AuthResponse;
 import com.example.springsecuritydemo.authentication.jwt.JwtTokenUtil;
 import com.example.springsecuritydemo.entity.User;
-import com.example.springsecuritydemo.repository.UserRepository;
 import com.example.springsecuritydemo.service.JwtUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,35 +18,28 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/auth")
-public class AuthApi {
+public class AuthApiController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUserDetailsService jwtUserDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
+    public AuthApiController(AuthenticationManager authenticationManager, JwtUserDetailsService jwtUserDetailsService, JwtTokenUtil jwtTokenUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder encoder;
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request) throws Exception {
-
+    public ResponseEntity<Object> login(@RequestBody @Valid AuthRequest request) {
         authenticate(request.getEmail(), request.getPassword());
         User user = jwtUserDetailsService.loadUserByUsername(request.getEmail());
-
         String accessToken = jwtTokenUtil.generateAccessToken(user);
-
         AuthResponse response = new AuthResponse(request.getEmail(), accessToken);
         return ResponseEntity.ok(response);
 
     }
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (BadCredentialsException e) {

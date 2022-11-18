@@ -1,4 +1,4 @@
-package com.example.springsecuritydemo.authentication;
+package com.example.springsecuritydemo.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

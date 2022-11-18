@@ -1,4 +1,4 @@
-package com.example.springsecuritydemo.authentication;
+package com.example.springsecuritydemo.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
